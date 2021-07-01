@@ -302,10 +302,9 @@ async function doTask() {
                     console.log(`准备做此任务：${item.taskName}`);
                     for (let task of item.shoppingActivityVos) {
                         if (task.status === 1) {
-                            // await $.wait(5000);
+                            await $.wait(5000);
                             await jdfactory_collectScore(task.taskToken);
-                            console.log(`${item.taskName}已完成一次`)
-                            break;
+                            await jdfactory_collectScore2(task.taskToken, 1);
                         }
                     }
                 } else {
@@ -358,12 +357,18 @@ async function doTask() {
             }
             if (item.taskType === 15) {
                 //浏览并加购
+                $.taskTimes = item.times;
                 if (item.status === 1) {
                     for (let task of item.productInfoVos) {
                         if (task.status === 1) {
-                            console.log(`准备做此任务：${item.taskName}`);
-                            await $.wait(1000);
-                            await jdfactory_collectScore(task.taskToken);
+                            if ($.taskTimes < item.maxTimes) {
+                                console.log(`准备做此任务：${item.taskName}`);
+                                await $.wait(1000);
+                                await jdfactory_collectScore(task.taskToken);
+                                $.taskTimes++;
+                            } else {
+                                break;
+                            }
                         }
                     }
                 } else {
@@ -399,6 +404,37 @@ function jdfactory_collectScore(taskToken) {
                         if (data.data.bizCode === 0) {
                             $.taskVos = data.data.result.taskVos;//任务列表
                             console.log(`领取做完任务的奖励：${JSON.stringify(data.data.result)}`);
+                        } else {
+                            console.log(JSON.stringify(data))
+                        }
+                    }
+                }
+            } catch (e) {
+                $.logErr(e, resp)
+            } finally {
+                resolve(data);
+            }
+        })
+    })
+}
+
+function jdfactory_collectScore2(taskToken, actionType) {
+    return new Promise(async resolve => {
+        await $.wait(1000);
+        $.post(taskPostUrl("jdfactory_collectScore", {
+            taskToken,
+            actionType
+        }, "jdfactory_collectScore"), async (err, resp, data) => {
+            try {
+                if (err) {
+                    console.log(`${JSON.stringify(err)}`)
+                    console.log(`${$.name} API请求失败，请检查网路重试`)
+                } else {
+                    if (safeGet(data)) {
+                        data = JSON.parse(data);
+                        if (data.data.bizCode === 0) {
+                            // $.taskVos = data.data.result.taskVos;//任务列表
+                            console.log(`领取做完任务的奖励：${JSON.stringify(data)}`);
                         } else {
                             console.log(JSON.stringify(data))
                         }
@@ -733,6 +769,7 @@ function taskPostUrl(function_id, body = {}, function_id2) {
     if (function_id2) {
         url += `?functionId=${function_id2}`;
     }
+    console.log(JSON.stringify(body))
     return {
         url,
         body: `functionId=${function_id}&body=${escape(JSON.stringify(body))}&client=wh5&clientVersion=1.1.0`,
