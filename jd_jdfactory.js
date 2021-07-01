@@ -264,7 +264,11 @@ async function doTask() {
                     console.log(`准备做此任务：${item.taskName}`);
                     for (let task of item.followShopVo) {
                         if (task.status === 1) {
-                            await jdfactory_collectScore(task.taskToken);
+                            const taskRes = await jdfactory_collectScore(task.taskToken);
+                            if (taskRes.code === 0 && taskRes.data.bizCode === -7001) {
+                                console.log(`满能量无法再领取，全部跳出`);
+                                return false
+                            }
                         }
                     }
                 } else {
@@ -277,7 +281,11 @@ async function doTask() {
                     console.log(`准备做此任务：${item.taskName}`);
                     for (let task of item.productInfoVos) {
                         if (task.status === 1) {
-                            await jdfactory_collectScore(task.taskToken);
+                            const taskRes = await jdfactory_collectScore(task.taskToken);
+                            if (taskRes.code === 0 && taskRes.data.bizCode === -7001) {
+                                console.log(`满能量无法再领取，全部跳出`);
+                                return false
+                            }
                         }
                     }
                 } else {
@@ -290,7 +298,11 @@ async function doTask() {
                     console.log(`准备做此任务：${item.taskName}`);
                     for (let task of item.shoppingActivityVos) {
                         if (task.status === 1) {
-                            await jdfactory_collectScore(task.taskToken);
+                            const taskRes = await jdfactory_collectScore(task.taskToken);
+                            if (taskRes.code === 0 && taskRes.data.bizCode === -7001) {
+                                console.log(`满能量无法再领取，全部跳出`);
+                                return false
+                            }
                         }
                     }
                 } else {
@@ -299,11 +311,15 @@ async function doTask() {
             }
             if (item.taskType === 9) {
                 //去看看优惠日历
-                if (item.status === 1) {
+                if (item.status === 1 && item.times < item.maxTimes) {
                     console.log(`准备做此任务：${item.taskName}`);
                     for (let task of item.shoppingActivityVos) {
                         if (task.status === 1) {
-                            await jdfactory_collectScore(task.taskToken);
+                            const taskRes = await jdfactory_collectScore(task.taskToken);
+                            if (taskRes.code === 0 && taskRes.data.bizCode === -7001) {
+                                console.log(`满能量无法再领取，全部跳出`);
+                                return false
+                            }
                             await $.wait(5000);
                             await jdfactory_collectScore2(task.taskToken, 1);
                             console.log(`${item.taskName}已做一次`)
@@ -319,7 +335,11 @@ async function doTask() {
                     if (item.threeMealInfoVos[0].status === 1) {
                         //可以做此任务
                         console.log(`准备做此任务：${item.taskName}`);
-                        await jdfactory_collectScore(item.threeMealInfoVos[0].taskToken);
+                        const taskRes = await jdfactory_collectScore(item.threeMealInfoVos[0].taskToken);
+                        if (taskRes.code === 0 && taskRes.data.bizCode === -7001) {
+                            console.log(`满能量无法再领取，全部跳出`);
+                            return false
+                        }
                     } else if (item.threeMealInfoVos[0].status === 0) {
                         console.log(`${item.taskName} 任务已错过时间`)
                     }
@@ -344,7 +364,11 @@ async function doTask() {
                 //每日打卡
                 if (item.status === 1) {
                     console.log(`准备做此任务：${item.taskName}`);
-                    await jdfactory_collectScore(item.simpleRecordInfoVo.taskToken);
+                    const taskRes = await jdfactory_collectScore(item.simpleRecordInfoVo.taskToken);
+                    if (taskRes.code === 0 && taskRes.data.bizCode === -7001) {
+                        console.log(`满能量无法再领取，全部跳出`);
+                        return false
+                    }
                 } else {
                     console.log(`${item.taskName}已完成`);
                 }
@@ -367,7 +391,11 @@ async function doTask() {
                             if ($.taskTimes < item.maxTimes) {
                                 console.log(`准备做此任务：${item.taskName}`);
                                 await $.wait(1000);
-                                await jdfactory_collectScore(task.taskToken);
+                                const taskRes = await jdfactory_collectScore(task.taskToken);
+                                if (taskRes.code === 0 && taskRes.data.bizCode === -7001) {
+                                    console.log(`满能量无法再领取，全部跳出`);
+                                    return false
+                                }
                                 $.taskTimes++;
                             } else {
                                 break;
@@ -383,8 +411,11 @@ async function doTask() {
                 if (item.status === 1) {
                     console.log(`准备做此任务：${item.taskName}`);
                     await queryVkComponent();
-                    await jdfactory_collectScore(item.simpleRecordInfoVo.taskToken);
-                } else {
+                    const taskRes = await jdfactory_collectScore(item.simpleRecordInfoVo.taskToken);
+                    if (taskRes.code === 0 && taskRes.data.bizCode === -7001) {
+                        console.log(`满能量无法再领取，全部跳出`);
+                        return false
+                    }
                     console.log(`${item.taskName}已完成`);
                 }
             }
