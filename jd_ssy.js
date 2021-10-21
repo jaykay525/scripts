@@ -106,11 +106,9 @@ async function zoo() {
             await $.wait(3000);
             await takePostRequest('travel_raise');
         }
-        return;
         await $.wait(1000);
         await takePostRequest('travel_getTaskDetail');
         await $.wait(1000);
-        return;
         //领取每日完成任务奖励
         for (let i = 0; i < $.lotteryTaskVos[0].badgeAwardVos.length; i++) {
             $.badgeAward = $.lotteryTaskVos[0].badgeAwardVos[i];
@@ -123,7 +121,7 @@ async function zoo() {
         //做任务
         for (let i = 0; i < $.taskList.length && $.secretp && !$.hotFlag; i++) {
             $.oneTask = $.taskList[i];
-            if ([7, 9].includes($.oneTask.taskType) && $.oneTask.status === 1) {
+            if ([3, 7, 9].includes($.oneTask.taskType) && $.oneTask.status === 1) {
                 $.activityInfoList = $.oneTask.shoppingActivityVos || $.oneTask.brandMemberVos || $.oneTask.followShopVo || $.oneTask.browseShopVo;
                 for (let j = 0; j < $.activityInfoList.length; j++) {
                     $.oneActivityInfo = $.activityInfoList[j];
