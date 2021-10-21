@@ -102,7 +102,6 @@ async function zoo() {
         await $.wait(1000);
         await takePostRequest('travel_getTaskDetail');
         await $.wait(1000);
-        return;
         //领取每日完成任务奖励
         for (let i = 0; i < $.lotteryTaskVos[0].badgeAwardVos.length; i++) {
             $.badgeAward = $.lotteryTaskVos[0].badgeAwardVos[i];
